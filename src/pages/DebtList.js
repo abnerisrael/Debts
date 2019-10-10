@@ -3,6 +3,10 @@ import {StyleSheet, View, Text, TouchableOpacity, SectionList} from 'react-nativ
 import Card from '../components/Card';
 
 export default class DebtList extends Component {
+
+  constructor(props) {
+    super(props);
+  }
   
   static navigationOptions = {
     headerTitle: "Debit List",
@@ -17,37 +21,51 @@ export default class DebtList extends Component {
 
   render() {
 
+    const { navigation } = this.props;
+
+    //TODO: O que acontece se nao existir debitos? getParam('paramName', default)
+    const debts = navigation.getParam('debts');
+
+    console.log(debts);
+
     const DATA = [
       {
-        title: 'Food',
-        data: [
-          { id:0, description: "Pizza no Fds", value: 15 ,category: "Food", createdAt: '11/09/2019' },
-          { id:1, description: "Refri Coca cola no araujo", value: 5 ,category: "Food", createdAt: '11/09/2019' },
-        ],
-      },
-
-      {
-        title: 'Personal',
-        data: [
-          { id:2, description: "Bola", value: 10, category: "Personal", createdAt: '12/09/2019' },
-        ],
-      },
-
-      {
-        title: 'Travel',
-        data: [
-          { id:3, description: "Passagem para Paris", value: 5000, category: "Travel", createdAt: '13/09/2019' },
-          { id:4, description: "Passagem para Guaramiranca-Ce", value: 100, category: "Travel", createdAt: '15/09/2019' },
-        ],
-      },
-
-      {
-        title: 'Life',
-        data: [
-          { id:5, description: "Remedio Benegripe na farmacia", value: 5, category: "Life", createdAt: '15/09/2019' },
-        ],
+        title: 'all',
+        data: debts,
       },
     ];
+
+    // const DATA = [
+    //   {
+    //     title: 'Food',
+    //     data: [
+    //       { id:0, description: "Pizza no Fds", value: 15 ,category: "Food", createdAt: '11/09/2019' },
+    //       { id:1, description: "Refri Coca cola no araujo", value: 5 ,category: "Food", createdAt: '11/09/2019' },
+    //     ],
+    //   },
+
+    //   {
+    //     title: 'Personal',
+    //     data: [
+    //       { id:2, description: "Bola", value: 10, category: "Personal", createdAt: '12/09/2019' },
+    //     ],
+    //   },
+
+    //   {
+    //     title: 'Travel',
+    //     data: [
+    //       { id:3, description: "Passagem para Paris", value: 5000, category: "Travel", createdAt: '13/09/2019' },
+    //       { id:4, description: "Passagem para Guaramiranca-Ce", value: 100, category: "Travel", createdAt: '15/09/2019' },
+    //     ],
+    //   },
+
+    //   {
+    //     title: 'Life',
+    //     data: [
+    //       { id:5, description: "Remedio Benegripe na farmacia", value: 5, category: "Life", createdAt: '15/09/2019' },
+    //     ],
+    //   },
+    // ];
 
     return (
       <View style={styles.container}>
