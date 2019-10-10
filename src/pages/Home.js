@@ -5,12 +5,48 @@ import Card from '../components/Card';
 import Icon from 'react-native-vector-icons/FontAwesome';
 
 export default class Home extends Component {
+
+  constructor(props) {
+    super(props);
+    this.state = { debts: [] }
+  }
   
   static navigationOptions = {
     headerTransparent: true,
   };
 
+  componentDidMount() {
+    this.setState({
+      debts: [
+        { id:0, description: "Pizza no Fds", value: 15 ,category: "Food", createdAt: '11/09/2019' },
+        { id:1, description: "Refri Coca cola no araujo", value: 5 ,category: "Food", createdAt: '11/09/2019' },
+        { id:2, description: "Bola", value: 10, category: "Personal", createdAt: '12/10/2019' },
+        { id:3, description: "Passagem para Paris", value: 5000, category: "Travel", createdAt: '13/10/2019' },
+        { id:4, description: "Passagem para Guaramiranca-Ce", value: 100, category: "Travel", createdAt: '15/10/2019' },
+        { id:5, description: "Remedio Benegripe na farmacia", value: 5.20, category: "Life", createdAt: '15/10/2019' },
+      ]
+    });
+  }
+
   render() {
+
+    const { debts } = this.state;
+
+    var debts_total = 0, debts_thisMonth = 0;
+
+    debts.forEach((debt) => {
+      debts_total += debt.value;
+
+      var dateSplited = debt.createdAt.split('/');
+      var debtDate = new Date(dateSplited[2], dateSplited[1], dateSplited[0]);
+
+      var currentDate = new Date();
+
+      if ( debtDate.getMonth() == currentDate.getMonth() && debtDate.getFullYear() == currentDate.getFullYear() ) {
+        debts_thisMonth += debt.value;
+      }
+
+    });
     
     return( 
       <View style={styles.container}>
@@ -26,12 +62,12 @@ export default class Home extends Component {
             
             <View style={styles.section}>
               <Text style={styles.sectionLabel}>This Month</Text>
-              <Text style={styles.sectionValue}>$ 00,00</Text>
+              <Text style={styles.sectionValue}>$ {debts_thisMonth}</Text>
             </View>
 
             <View style={styles.section}>
               <Text style={styles.sectionLabel}>Total</Text>
-              <Text style={styles.sectionValue}>$ 00,00</Text>
+              <Text style={styles.sectionValue}>$ {debts_total}</Text>
             </View>
           </View>
 
@@ -48,7 +84,7 @@ export default class Home extends Component {
               </View>
             </TouchableNativeFeedback>
 
-            <TouchableNativeFeedback onPress={ () => this.props.navigation.navigate('DebtList') } >
+            <TouchableNativeFeedback onPress={ () => this.props.navigation.navigate('DebtList', {debts: this.state.debts }) } >
               <View style={styles.button}>
                 <View style={styles.buttonLabel}>
                   <Icon name="dollar" style={styles.buttonLabelIcon} />
