@@ -12,7 +12,6 @@ export default class DebtList extends Component {
     headerTitle: "Debit List",
     headerTransparent: true,
     headerRight: (
-      //Btn Salve New Debit
       <TouchableOpacity onPress={ () => {} }> 
         <Text style={ {paddingRight:20, color:"#9d00dE", fontSize:15} }>Filter</Text>
       </TouchableOpacity>
@@ -27,6 +26,7 @@ export default class DebtList extends Component {
     const debts = navigation.getParam('debts');
 
     console.log(debts);
+    console.log(debts.lenght);
 
     const DATA = [
       {
@@ -67,15 +67,28 @@ export default class DebtList extends Component {
     //   },
     // ];
 
+    let pageContent;
+
+    if (debts.lenght != null) {
+
+      pageContent = <SectionList 
+        style={styles.list}
+        sections={ DATA } 
+        keyExtractor={ (item, index) => index }
+        renderSectionHeader={ ( {section} ) => <Text style={styles.sectionList}>{ section.title }</Text> } 
+        renderItem={ ( { item } ) => <ItemList debt = { item } actionOnTouch={ () => this.props.navigation.navigate('EditDebt', item) } /> } 
+      />
+            
+    } else {
+
+      pageContent = <Text>No debts to display.</Text>
+
+    }
+
     return (
       <View style={styles.container}>
 
-        <SectionList style={styles.list}
-          sections={ DATA } 
-          keyExtractor={ (item, index) => index }
-          renderSectionHeader={ ( {section} ) => <Text style={styles.sectionList}>{ section.title }</Text> } 
-          renderItem={ ( { item } ) => <ItemList debt = { item } actionOnTouch={ () => this.props.navigation.navigate('EditDebt', item) } /> } 
-        />
+        {pageContent}
 
       </View>
     );
