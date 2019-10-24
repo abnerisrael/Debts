@@ -7,51 +7,123 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 export default class Home extends Component {
 
   constructor(props) {
+
     super(props);
-    this.state = { debts: [] }
+
+    this.state = { 
+      id:'',
+      description: '',
+      value: '',
+      category: '',
+      createdAt:'',
+      debts: [
+        // { id:0, description: "Pizza no Fds", value: 15 ,category: "Food", createdAt: '11/09/2019' },
+        // { id:1, description: "Refri Coca cola no araujo", value: 5 ,category: "Food", createdAt: '11/09/2019' },
+        // { id:2, description: "Bola", value: 10, category: "Personal", createdAt: '12/09/2019' },
+        // { id:3, description: "Passagem para Paris", value: 5000, category: "Travel", createdAt: '13/09/2019' },
+        // { id:4, description: "Passagem para Guaramiranca-Ce", value: 100, category: "Travel", createdAt: '15/09/2019' },
+        // { id:5, description: "Remedio Benegripe na farmacia", value: 5, category: "Life", createdAt: '15/10/2019' },
+      ]
+    }
+
+  }
+
+  handleChange = input => {
+
+    const { name, value } = input;
+
+    this.setState({
+      [name]: value
+    })
+
+  }
+
+
+  handleSubmit = ()  => {
+
+    const {id, description, value, category, createdAt} = this.state;
+
+    this.storeDebt({
+      id: id,
+      description: description,
+      value: value,
+      category: category,
+      createdAt: '24/10/2019'
+    });
+
   }
   
+
+  storeDebt = (debt) => {
+
+    if(debt.id == '') { 
+
+      if(this.state.debts.length == 0) {
+        debt.id = 0;
+      }
+
+      if(this.state.debts.length > 0) {
+        
+        let lastIdFound = 0;
+        this.state.debts.map((debt) => {
+          
+          if(debt.id > lastIdFound){
+            lastIdFound = debt.id;
+          }
+
+        })
+
+        debt.id = lastIdFound + 1;
+
+      }
+
+      this.setState({debts: [...this.state.debts, debt]});
+
+    };
+
+  }
+
+
   static navigationOptions = {
     headerTransparent: true,
   };
 
-  componentDidMount() {
-    this.setState({
-      debts: [
-        { id:0, description: "Pizza no Fds", value: 15 ,category: "Food", createdAt: '11/09/2019' },
-        { id:1, description: "Refri Coca cola no araujo", value: 5 ,category: "Food", createdAt: '11/09/2019' },
-        { id:2, description: "Bola", value: 10, category: "Personal", createdAt: '12/10/2019' },
-        { id:3, description: "Passagem para Paris", value: 5000, category: "Travel", createdAt: '13/10/2019' },
-        { id:4, description: "Passagem para Guaramiranca-Ce", value: 100, category: "Travel", createdAt: '15/10/2019' },
-        { id:5, description: "Remedio Benegripe na farmacia", value: 5.20, category: "Life", createdAt: '15/10/2019' },
-      ]
-    });
-  }
 
   render() {
 
+    const events = {
+      onHandleChange: this.handleChange,
+      onHandleSubmit: this.handleSubmit,
+    }
+
     const { debts } = this.state;
 
-    var debts_total = 0, debts_thisMonth = 0;
+    let debts_total = 0;
+    let debts_thisMonth = 0;
 
     debts.forEach((debt) => {
-      debts_total += debt.value;
+      debts_total = Number(debts_total) + Number(debt.value);
 
+      //Get the actualy and Debt Month
       var dateSplited = debt.createdAt.split('/');
       var debtDate = new Date(dateSplited[2], dateSplited[1], dateSplited[0]);
-
       var currentDate = new Date();
 
-      if ( debtDate.getMonth() == currentDate.getMonth() && debtDate.getFullYear() == currentDate.getFullYear() ) {
-        debts_thisMonth += debt.value;
+      // Count the Debts of actualy month
+      if ( debtDate.getFullYear() == currentDate.getFullYear() ) 
+      {
+        if ( debtDate.getMonth() == currentDate.getMonth() + 1 ) 
+        {
+          debts_thisMonth =  Number(debts_thisMonth) + Number(debt.value);
+        }
       }
-
+      
     });
     
     return( 
       <View style={styles.container}>
 
-        <Text style={styles.hello}>Hello, Abner.</Text>
+        <Text style={styles.hello}>Hello, You.</Text>
 
         <Card>
 
@@ -84,7 +156,7 @@ export default class Home extends Component {
               </View>
             </TouchableNativeFeedback>
 
-            <TouchableNativeFeedback onPress={ () => this.props.navigation.navigate('DebtList', {debts: this.state.debts }) } >
+            <TouchableNativeFeedback onPress={ () => this.props.navigation.navigate('DebtList', { debts: this.state.debts, events: events }) } >
               <View style={styles.button}>
                 <View style={styles.buttonLabel}>
                   <Icon name="dollar" style={styles.buttonLabelIcon} />
@@ -100,7 +172,7 @@ export default class Home extends Component {
 
         <ActionButton
           buttonColor="#9d00dE"
-          onPress={() => this.props.navigation.navigate('NewDebt')}
+          onPress={ () => this.props.navigation.navigate('NewDebt', { events: events }) }
         />
 
       </View>
